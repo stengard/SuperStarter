@@ -64,8 +64,9 @@ function OpenChrome{
 function StartApplications{
     Param([string[]]$applications)
     WriteDelimiter -m "AUTO APP STARTER"
-    if($applications.length -gt 0){
+    if($p.length -gt 0){
         WriteMessage -t "AUTOSTART" -m "Starting applications $applications"
+
         forEach($app in $applications){
             WriteMessage -t "Starting" -m "$app"
             #kolla om den körs innan
@@ -81,29 +82,9 @@ function StartApplications{
         WriteSkippingMessage -t "APP" -m "No applications has been provided in the config.js -b darkgreen"   
     }
     WriteDelimiter
+
 }
 
-function StartApplicationsAsAdministrator{
-    Param([string]$applications)
-    WriteDelimiter -m "AUTO APP STARTER ADMIN"	
-	if($applications){
-	 WriteMessage -t "AUTOSTART AS ADMINISTRATOR" -m "OPENING $applications"	
-	 forEach($app in $applications){
-			WriteMessage -t "Starting " -m "$app"
-			#kolla om den körs innan
-			try{
-				ii $app
-			}
-			catch{
-				WriteErrorMessage -m "Could not open $app"
-			}
-		}	
-	}else{
-        WriteSkippingMessage -t "AUTOSTART" -m "No applications has been provided in the config.js -b darkgreen"   
-        
-    }
-    WriteDelimiter    
-}
 
 function WriteHeader {
     write-host      ""    

@@ -6,7 +6,7 @@ Import-Module ./Modules/Tools
 
 WriteHeader
 
-$global:BaseConfig = "./configs/config.json"
+$global:BaseConfig = "./config.json"
 $activeProject = "";
 
 try {
@@ -55,12 +55,7 @@ catch{
 if($activeProject._useVpn){
     ConnectToVpn -vpnName $activeProject._settings._vpnName
 }
-
+OpenFile -paths $activeProject._settings._path
 OpenChrome -webPages $activeProject._settings._webPages
 StartApplications -applications $activeProject._settings._autoStartPrograms
-if($activeProject.__startAsAdmin){
-    StartApplicationsAsAdministrator -applications $activeProject._settings._autoStartProgramsAsAdministrator
-}else{
-    StartApplications -applications $activeProject._settings._autoStartPrograms
-}
 
