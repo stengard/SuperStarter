@@ -53,7 +53,9 @@ function OpenChrome{
     if($webPages.length -gt 0){
         try{
             WriteMessage -t "CHROME" -m "Trying to open following webpages: $webPages"
+			sleep 0.5
             if($useNewWindow){
+				sleep 0.5
                 start chrome "--new-window"
             }
             start chrome $webPages
@@ -73,6 +75,7 @@ function StartApplications{
     Param([string[]]$applications)
     WriteDelimiter -m "AUTO APP STARTER"
     if($applications.length -gt 0){
+		sleep 0.5
         WriteMessage -t "AUTOSTART" -m "Starting applications $applications"
         forEach($app in $applications){
             WriteMessage -t "Starting" -m "$app"
