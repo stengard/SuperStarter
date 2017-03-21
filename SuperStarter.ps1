@@ -41,22 +41,11 @@ while($selectedIndex -ge $Config.projects.length -or (-not $selectedIndex)){
       
     if($selectedIndex -ge $Config.projects.length){
         WriteErrorMessage "Please select a valid number"
+    }else{
+        clear
+        WriteHeader
     }
-}
-
-WriteMessage -t n -m "NO"
-WriteMessage -t y -m "YES"
-
-while($openNewWindow -ne "y" -And $openNewWindow -ne "n"){
-$openNewWindow = Read-Host -Prompt 'Open in virtual window?'
-
-	if($openNewWindow -ne "y" -And $openNewWindow -ne "n"){
-		WriteErrorMessage "Please select Y for Yes and N for No"
-	}
-}
-
-if($openNewWindow -eq "y"){
-	CreateVirtualDesktop
+    
 }
 
 try{
@@ -70,16 +59,89 @@ catch{
     WriteErrorMessage -m "Error when starting script"
 }
 
-#Start VPN
-ConnectToVpn -vpnName $activeProject._settings._vpnName
 
-#Open web pages in chrome
-OpenChrome -webPages $activeProject._settings._webPages -useNewWindow $activeProject._useNewChromeWindow
+WriteMessage -t n -m "NO"
+WriteMessage -t y -m "YES"
 
-#Start applications
-if($activeProject.__startAsAdmin){
-    StartApplicationsAsAdministrator -applications $activeProject._settings._autoStartProgramsAsAdministrator
-}else{
-    StartApplications -applications $activeProject._settings._autoStartPrograms
+while($openNewWindow -ne "y" -And $openNewWindow -ne "n"){
+    $openNewWindow = Read-Host -Prompt 'Open in virtual window?'
+
+	if($openNewWindow -ne "y" -And $openNewWindow -ne "n"){
+		WriteErrorMessage "Please select Y for Yes and N for No"
+	}else{
+        clear
+        WriteHeader
+    }
 }
+
+
+
+while($option -ne "q"){
+    WriteMessage -t e -m "EVERYTHING!!!!!! :D"
+    WriteMessage -t v -m "Start vpn"
+    WriteMessage -t a -m "Start applications"
+    WriteMessage -t c -m "Open web pages"
+    WriteMessage -t s -m "Change project"
+    WriteMessage -t q -m "quit"
+
+    $option = Read-Host -Prompt 'What do you want to do?'
+
+	if($option){
+		WriteErrorMessage "Select on option you want to perform for the selected project"
+        clear
+        WriteHeader
+        if($option -eq "q"){
+            clear
+            break
+            exit
+        }
+        if($option -eq "s"){
+            clear
+            Clear-Variable -name selectedIndex 
+            Clear-Variable -name option 
+            Clear-Variable -name openNewWindow 
+            .\SuperStarter.ps1
+        }
+        if($openNewWindow -eq "y" -and $option -eq "e"){
+	        CreateVirtualDesktop
+        }
+        if($option -eq "v"){
+            ConnectToVpn -vpnName $activeProject._settings._vpnName
+        }
+        if($option -eq "a"){
+            #Start applications
+            if($activeProject.__startAsAdmin){
+                StartApplicationsAsAdministrator -applications $activeProject._settings._autoStartProgramsAsAdministrator
+            }else{
+                StartApplications -applications $activeProject._settings._autoStartPrograms
+            }
+        }
+        if($option -eq "c"){
+            #Open web pages in chrome
+            OpenChrome -webPages $activeProject._settings._webPages -useNewWindow $activeProject._useNewChromeWindow    
+        }
+        if($option -eq "e"){
+	        CreateVirtualDesktop
+            #Start VPN
+            ConnectToVpn -vpnName $activeProject._settings._vpnName
+            #Open web pages in chrome
+            OpenChrome -webPages $activeProject._settings._webPages -useNewWindow $activeProject._useNewChromeWindow         
+            #Start applications
+            if($activeProject.__startAsAdmin){
+                StartApplicationsAsAdministrator -applications $activeProject._settings._autoStartProgramsAsAdministrator
+            }else{
+                StartApplications -applications $activeProject._settings._autoStartPrograms
+            }
+        }
+
+    }
+}
+
+
+
+
+
+
+
+
 
