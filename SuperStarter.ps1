@@ -3,6 +3,7 @@ Remove-Module *
 
 # Import stuff 
 Import-Module ./Modules/Tools
+Import-Module ./Modules/CreateVirtualDesktopInWin10
 
 WriteHeader
 
@@ -43,6 +44,21 @@ while($selectedIndex -ge $Config.projects.length -or (-not $selectedIndex)){
     }
 }
 
+WriteMessage -t n -m "NO"
+WriteMessage -t y -m "YES"
+
+while($openNewWindow -ne "y" -And $openNewWindow -ne "n"){
+$openNewWindow = Read-Host -Prompt 'Open in virtual window?'
+
+	if($openNewWindow -ne "y" -And $openNewWindow -ne "n"){
+		WriteErrorMessage "Please select Y for Yes and N for No"
+	}
+}
+
+if($openNewWindow -eq "y"){
+	CreateVirtualDesktop
+}
+
 try{
     $activeProject = $Config.projects[$selectedIndex].project
     WriteDelimiter -m $activeProject._name
@@ -55,9 +71,7 @@ catch{
 }
 
 #Start VPN
-if($activeProject._useVpn){
-    ConnectToVpn -vpnName $activeProject._settings._vpnName
-}
+ConnectToVpn -vpnName $activeProject._settings._vpnName
 
 #Open web pages in chrome
 OpenChrome -webPages $activeProject._settings._webPages -useNewWindow $activeProject._useNewChromeWindow

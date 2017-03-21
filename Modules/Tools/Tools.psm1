@@ -32,13 +32,19 @@ function WriteDelimiter{
 
 function ConnectToVpn{
     Param([string]$vpnName)
-    WriteMessage -t "VPN" -m "Connecting to $vpnName"
-    try{
-        rasdial $vpnName
+    WriteDelimiter -m "AUTO VPN"    
+    if($vpnName){
+        WriteMessage -t "VPN" -m "Connecting to $vpnName"
+        try{
+            rasdial $vpnName
+        }
+        catch{
+            WriteErrorMessage -m "Could not connect to. Please verify user credentials $vpnName"
+        }
+    }else{
+        WriteSkippingMessage -t "VPN" -m "No vpn name was specified in the config.js"           
     }
-    catch{
-        WriteErrorMessage -m "Could not connect to. Please verify user credentials $vpnName"
-    }
+    WriteDelimiter    
 }
 
 function OpenChrome{
@@ -92,6 +98,7 @@ function StartApplicationsAsAdministrator{
 	 WriteMessage -t "AUTOSTART AS ADMINISTRATOR" -m "OPENING $applications"	
 	 forEach($app in $applications){
 			WriteMessage -t "Starting " -m "$app"
+            sleep 0.5
 			#kolla om den körs innan
 			try{
 				ii $app
@@ -105,6 +112,22 @@ function StartApplicationsAsAdministrator{
         
     }
     WriteDelimiter    
+}
+
+Function CreateVirtualDesktop
+{
+    WriteDelimiter -m "AUTO APP STARTER ADMIN"	
+	WriteMessage -t "DESKTOP" -m "OPENING New virtual window"   
+    try{
+        CreateVirtualDesktopInWin10
+        sleep 1.5
+
+    }catch{
+        WriteErrorMessage -m "Could open new virtual window start"  
+        WriteErrorMessage $_.Exception.Message
+        exit
+    }
+    WriteDelimiter   
 }
 
 function WriteHeader {
