@@ -24,7 +24,7 @@ function WriteDelimiter{
         Write-host "" 
     }
     else{
-        Write-host "----------------------------------------------"  -ForegroundColor Blue     
+        Write-host "---------------------------------------------------------"  -ForegroundColor Blue     
         Write-host ""    
     }
     

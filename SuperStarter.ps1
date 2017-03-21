@@ -12,12 +12,16 @@ $activeProject = "";
 try {
 	$global:Config = Get-Content "$BaseDirectory$BaseConfig" -Raw -ErrorAction:SilentlyContinue -WarningAction:SilentlyContinue | ConvertFrom-Json -ErrorAction:SilentlyContinue -WarningAction:SilentlyContinue
 } catch {
-	WriteErrorMessage "The Base configuration file is missing!"
+	WriteErrorMessage "The Base configuration file could not be read!"
+	WriteErrorMessage $_.Exception.Message
+    exit
 }
 
 # Check the configuration
 if (!($Config)) {
 	WriteErrorMessage "The Base configuration file is missing!"
+	WriteErrorMessage "Aborting!"
+    exit
 }
 
 
