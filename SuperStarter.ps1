@@ -5,6 +5,16 @@ Remove-Module *
 Import-Module ./Modules/Tools
 Import-Module ./Modules/CreateVirtualDesktopInWin10
 
+if($selectedIndex){
+    Clear-Variable -name selectedIndex 
+}
+if($option){
+            Clear-Variable -name option 
+}
+if($openNewWindow){
+    Clear-Variable -name openNewWindow 
+}
+
 WriteHeader
 
 $global:BaseConfig = "./configs/config.json"
@@ -45,7 +55,6 @@ while($selectedIndex -ge $Config.projects.length -or (-not $selectedIndex)){
         clear
         WriteHeader
     }
-    
 }
 
 try{
@@ -97,9 +106,6 @@ while($option -ne "q"){
         }
         if($option -eq "s"){
             clear
-            Clear-Variable -name selectedIndex 
-            Clear-Variable -name option 
-            Clear-Variable -name openNewWindow 
             .\SuperStarter.ps1
         }
         if($openNewWindow -eq "y" -and $option -eq "e"){
