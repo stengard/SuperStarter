@@ -45,19 +45,20 @@ try{
     Write-Host "STARTING PROJECT " $activeProject._name -b DarkGreen -f white;
     Write-host     
     WriteDelimiter
-
-
 }
 catch{
     WriteErrorMessage -m "Error when starting script"
 }
 
+#Start VPN
 if($activeProject._useVpn){
     ConnectToVpn -vpnName $activeProject._settings._vpnName
 }
 
-OpenChrome -webPages $activeProject._settings._webPages
-StartApplications -applications $activeProject._settings._autoStartPrograms
+#Open web pages in chrome
+OpenChrome -webPages $activeProject._settings._webPages -useNewWindow $activeProject._useNewChromeWindow
+
+#Start applications
 if($activeProject.__startAsAdmin){
     StartApplicationsAsAdministrator -applications $activeProject._settings._autoStartProgramsAsAdministrator
 }else{

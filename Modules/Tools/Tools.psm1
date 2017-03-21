@@ -42,12 +42,14 @@ function ConnectToVpn{
 }
 
 function OpenChrome{
-    Param([string[]]$webPages)
+    Param([string[]]$webPages, [boolean]$useNewWindow)
     WriteDelimiter -m "AUTO CHROME STARTER"
     if($webPages.length -gt 0){
         try{
             WriteMessage -t "CHROME" -m "Trying to open following webpages: $webPages"
-            start chrome "--new-window"
+            if($useNewWindow){
+                start chrome "--new-window"
+            }
             start chrome $webPages
         }
         catch{
