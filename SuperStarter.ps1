@@ -48,7 +48,7 @@ WriteMessage -t n -m "NO"
 WriteMessage -t y -m "YES"
 
 while($openNewWindow -ne "y" -And $openNewWindow -ne "n"){
-$openNewWindow = Read-Host -Prompt 'Open in virtual window?'
+$openNewWindow = Read-Host -Prompt 'Open in virtual desktop?'
 
 	if($openNewWindow -ne "y" -And $openNewWindow -ne "n"){
 		WriteErrorMessage "Please select Y for Yes and N for No"
