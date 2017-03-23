@@ -1,7 +1,7 @@
 function WriteErrorMessage {
     Param ([string]$m)
     Write-Host ""
-    Write-Host "ERROR: " $m -BackgroundColor Red     
+    Write-Host "ERROR: " $m -BackgroundColor Red
     Write-Host ""
 }
 
@@ -20,19 +20,19 @@ function WriteSkippingMessage {
 function WriteDelimiter{
     Param ([string]$m)
     if($m){
-        Write-host "-----------------------$m-----------------------"  -ForegroundColor Blue     
-        Write-host "" 
+        Write-host "-----------------------$m-----------------------"  -ForegroundColor Blue
+        Write-host ""
     }
     else{
-        Write-host "---------------------------------------------------------"  -ForegroundColor Blue     
-        Write-host ""    
+        Write-host "---------------------------------------------------------"  -ForegroundColor Blue
+        Write-host ""
     }
-    
+
 }
 
 function ConnectToVpn{
     Param([string]$vpnName)
-    WriteDelimiter -m "AUTO VPN"    
+    WriteDelimiter -m "AUTO VPN"
     if($vpnName){
         WriteMessage -t "VPN" -m "Connecting to $vpnName"
         try{
@@ -42,20 +42,20 @@ function ConnectToVpn{
             WriteErrorMessage -m "Could not connect to. Please verify user credentials $vpnName"
         }
     }else{
-        WriteSkippingMessage -t "VPN" -m "No vpn name was specified in the config.js"           
+        WriteSkippingMessage -t "VPN" -m "No vpn name was specified in the config.js"
     }
-    WriteDelimiter    
+    WriteDelimiter
 }
 
 function OpenChrome{
     Param([string[]]$webPages, [boolean]$useNewWindow)
+
     WriteDelimiter -m "AUTO CHROME STARTER"
     if($webPages.length -gt 0){
         try{
             WriteMessage -t "CHROME" -m "Trying to open following webpages: $webPages"
-			sleep 0.5
             if($useNewWindow){
-				sleep 0.5
+                sleep 0.5
                 start chrome "--new-window"
             }
             start chrome $webPages
@@ -63,9 +63,9 @@ function OpenChrome{
         catch{
             WriteErrorMessage -m "Could not open chrome"
         }
-        WriteMessage -t "CHROME" -m "Chrome has successfully started" 
+        WriteMessage -t "CHROME" -m "Chrome has successfully started"
     }else{
-        WriteSkippingMessage -t "CHROME" -m "No webpages was specified in the config.js"   
+        WriteSkippingMessage -t "CHROME" -m "No webpages was specified in the config.js"
     }
     WriteDelimiter
 
@@ -86,19 +86,19 @@ function StartApplications{
             catch{
                 WriteErrorMessage -m "Could not open $app"
             }
-            WriteMessage -t "APP" "Sucessfully started $app"  
+            WriteMessage -t "APP" "Sucessfully started $app"
         }
     }else{
-        WriteSkippingMessage -t "APP" -m "No applications has been provided in the config.js -b darkgreen"   
+        WriteSkippingMessage -t "APP" -m "No applications has been provided in the config.js -b darkgreen"
     }
     WriteDelimiter
 }
 
 function StartApplicationsAsAdministrator{
     Param([string]$applications)
-    WriteDelimiter -m "AUTO APP STARTER ADMIN"	
+    WriteDelimiter -m "AUTO APP STARTER ADMIN"
 	if($applications){
-	 WriteMessage -t "AUTOSTART AS ADMINISTRATOR" -m "OPENING $applications"	
+	 WriteMessage -t "AUTOSTART AS ADMINISTRATOR" -m "OPENING $applications"
 	 forEach($app in $applications){
 			WriteMessage -t "Starting " -m "$app"
             sleep 0.5
@@ -109,32 +109,57 @@ function StartApplicationsAsAdministrator{
 			catch{
 				WriteErrorMessage -m "Could not open $app"
 			}
-		}	
+		}
 	}else{
-        WriteSkippingMessage -t "AUTOSTART" -m "No applications has been provided in the config.js -b darkgreen"   
-        
+        WriteSkippingMessage -t "AUTOSTART" -m "No applications has been provided in the config.js -b darkgreen"
+
     }
-    WriteDelimiter    
+    WriteDelimiter
 }
 
-Function CreateVirtualDesktop
+function CreateVirtualDesktop
 {
-    WriteDelimiter -m "AUTO APP STARTER ADMIN"	
-	WriteMessage -t "DESKTOP" -m "OPENING New virtual window"   
+     WriteDelimiter -m "AUTO APP STARTER ADMIN"
+	   WriteMessage -t "DESKTOP" -m "OPENING New virtual window"
     try{
         CreateVirtualDesktopInWin10
         sleep 1.5
 
     }catch{
-        WriteErrorMessage -m "Could open new virtual window start"  
+        WriteErrorMessage -m "Could open new virtual window start"
         WriteErrorMessage $_.Exception.Message
         exit
     }
-    WriteDelimiter   
+    WriteDelimiter
+}
+
+function ChangeIISsitePhysicalPath{
+    Param([string]$iisPhysicalPath, [string]$siteName)
+      WriteDelimiter -m "IIS SETTINGS"
+      if($iisPhysicalPath){
+        #try{
+            WriteMessage -t "IIS" -m "Changing physical path"
+            $iisSitePath = "IIS:\Sites\" + $siteName
+            WriteMessage -m $iisSitePath
+            $website = get-item $iisSitePath
+            WriteMessage -m $website
+            #$website.virtualDirectoryDefaults.userName = "domain\username"
+            #$website.virtualDirectoryDefaults.password = "password"
+            $website | set-item
+            sleep 0.3
+            #iisreset?
+            #WriteMessage -t "IIS" -m "The physical path to project $siteName is now changed to $iisPhysicalPath"
+        #}catch{
+            #WriteErrorMessage -m "Could open change the physical address for site $siteName"
+            #WriteErrorMessage $_.Exception.Message
+        #}
+      }else{
+        WriteSkippingMessage -t "IIS" -m "No iis settings has been provided in the config.js -b darkgreen"
+      }
 }
 
 function WriteHeader {
-    write-host      ""    
+    write-host      ""
     write-host      "                            _                                         " -ForegroundColor Red
     write-host      "    /\         _           | |  _               _                      " -ForegroundColor Red
     write-host      "   /  \  _   _| |_  ___    \ \ | |_  ____  ____| |_  ____  ____        " -ForegroundColor Red

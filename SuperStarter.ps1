@@ -1,18 +1,18 @@
 clear
 Remove-Module *
 
-# Import stuff 
+# Import stuff
 Import-Module ./Modules/Tools
 Import-Module ./Modules/CreateVirtualDesktopInWin10
 
 if($selectedIndex){
-    Clear-Variable -name selectedIndex 
+    Clear-Variable -name selectedIndex
 }
 if($option){
-            Clear-Variable -name option 
+            Clear-Variable -name option
 }
 if($openNewWindow){
-    Clear-Variable -name openNewWindow 
+    Clear-Variable -name openNewWindow
 }
 
 WriteHeader
@@ -38,7 +38,7 @@ if (!($Config)) {
 
 #MENU
 write-host "Choose the project you want to initialize" -ForegroundColor Blue
-Write-host "-----------------------------------------------" -ForegroundColor Blue 
+Write-host "-----------------------------------------------" -ForegroundColor Blue
 write-host ""
 $index = 0
 forEach($project in $Config.projects){
@@ -48,7 +48,7 @@ forEach($project in $Config.projects){
 
 while($selectedIndex -ge $Config.projects.length -or (-not $selectedIndex)){
     $selectedIndex = Read-Host -Prompt 'Start project'
-      
+
     if($selectedIndex -ge $Config.projects.length){
         WriteErrorMessage "Please select a valid number"
     }else{
@@ -61,36 +61,20 @@ try{
     $activeProject = $Config.projects[$selectedIndex].project
     WriteDelimiter -m $activeProject._name
     Write-Host "STARTING PROJECT " $activeProject._name -b DarkGreen -f white;
-    Write-host     
+    Write-host
     WriteDelimiter
 }
 catch{
     WriteErrorMessage -m "Error when starting script"
 }
 
-
-WriteMessage -t n -m "NO"
-WriteMessage -t y -m "YES"
-
-while($openNewWindow -ne "y" -And $openNewWindow -ne "n"){
-    $openNewWindow = Read-Host -Prompt 'Open in virtual window?'
-
-	if($openNewWindow -ne "y" -And $openNewWindow -ne "n"){
-		WriteErrorMessage "Please select Y for Yes and N for No"
-	}else{
-        clear
-        WriteHeader
-    }
-}
-
-
-
 while($option -ne "q"){
-    WriteMessage -t e -m "EVERYTHING!!!!!! :D"
-    WriteMessage -t v -m "Start vpn"
-    WriteMessage -t a -m "Start applications"
-    WriteMessage -t c -m "Open web pages"
-    WriteMessage -t s -m "Change project"
+    WriteMessage -t 0 -m "EVERYTHING!!!!!! :D"
+    WriteMessage -t 1 -m "Start vpn"
+    #WriteMessage -t 2 -m "Change iis settings"
+    WriteMessage -t 3 -m "Start applications"
+    WriteMessage -t 4 -m "Open web pages"
+    WriteMessage -t 5 -m "Change project"
     WriteMessage -t q -m "quit"
 
     $option = Read-Host -Prompt 'What do you want to do?'
@@ -104,17 +88,14 @@ while($option -ne "q"){
             break
             exit
         }
-        if($option -eq "s"){
+        if($option -eq "5"){
             clear
             .\SuperStarter.ps1
         }
-        if($openNewWindow -eq "y" -and $option -eq "e"){
-	        CreateVirtualDesktop
-        }
-        if($option -eq "v"){
+        if($option -eq "1"){
             ConnectToVpn -vpnName $activeProject._settings._vpnName
         }
-        if($option -eq "a"){
+        if($option -eq "3"){
             #Start applications
             if($activeProject.__startAsAdmin){
                 StartApplicationsAsAdministrator -applications $activeProject._settings._autoStartProgramsAsAdministrator
@@ -122,16 +103,33 @@ while($option -ne "q"){
                 StartApplications -applications $activeProject._settings._autoStartPrograms
             }
         }
-        if($option -eq "c"){
-            #Open web pages in chrome
-            OpenChrome -webPages $activeProject._settings._webPages -useNewWindow $activeProject._useNewChromeWindow    
+        if ($option -eq "2"){
+        #ChangeIISsitePhysicalPath -iisPhysicalPath $activeProject._settings._iisPhysicalPath -siteName $activeProject._settings._iisSiteName
         }
-        if($option -eq "e"){
+        if($option -eq "4"){
+            #Open web pages in chrome
+            OpenChrome -webPages $activeProject._settings._webPages -useNewWindow $activeProject._useNewChromeWindow
+        }
+        if($option -eq "0"){
+
+        WriteMessage -t n -m "NO"
+        WriteMessage -t y -m "YES"
+
+        while($openNewWindow -ne "y" -And $openNewWindow -ne "n"){
+            $openNewWindow = Read-Host -Prompt 'Open in virtual window?'
+
+        	if($openNewWindow -ne "y" -And $openNewWindow -ne "n"){
+        		WriteErrorMessage "Please select Y for Yes and N for No"
+        	}else{
+                clear
+                WriteHeader
+            }
+        }
 	        CreateVirtualDesktop
             #Start VPN
             ConnectToVpn -vpnName $activeProject._settings._vpnName
             #Open web pages in chrome
-            OpenChrome -webPages $activeProject._settings._webPages -useNewWindow $activeProject._useNewChromeWindow         
+            OpenChrome -webPages $activeProject._settings._webPages -useNewWindow $activeProject._useNewChromeWindow
             #Start applications
             if($activeProject.__startAsAdmin){
                 StartApplicationsAsAdministrator -applications $activeProject._settings._autoStartProgramsAsAdministrator
@@ -142,12 +140,3 @@ while($option -ne "q"){
 
     }
 }
-
-
-
-
-
-
-
-
-
