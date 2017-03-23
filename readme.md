@@ -26,7 +26,7 @@ You will be presented with a menu with choices. Select which project you want to
   git commit  
 3. This command pushes alex-feature to the central repository (origin), and the -u flag adds it as a remote tracking branch. After setting up the tracking branch, Alex can call git push without any parameters to push her feature.
 > git push -u origin alex-feature
-4. Alex has finished his changes. Before merging it into master, he needs to file a pull request letting the rest of the team know she's done. But first, he should make sure the central repository has her most recent commits:
+4. Alex has finished his changes. Before merging it into master, he needs to file a pull request letting the rest of the team know she's done. But first, he should make sure the central repository has his most recent commits:
 > git push
 6. First, whoever’s performing the merge needs to check out their master branch and make sure it’s up to date. Then, git pull origin alex-feature merges the central repository’s copy of alex-feature. You could also use a simple git merge alex-feature, but the command shown above makes sure you’re always pulling the most up-to-date version of the feature branch. Finally, the updated master needs to get pushed back to origin.
 > git checkout master  
