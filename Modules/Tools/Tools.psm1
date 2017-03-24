@@ -133,15 +133,29 @@ function CreateVirtualDesktop
     WriteDelimiter
 }
 
+
+function PerformIISReset{
+      WriteDelimiter -m "IIS SETTINGS"    
+      WriteMessage -t "IIS" -m "Changing physical path"
+      WriteDelimiter
+    try{
+        iisreset
+    }
+    catch{
+        WriteErrorMessage -m "Could open new virtual window start"
+        WriteErrorMessage $_.Exception.Message
+    }
+}
+
 function ChangeIISsitePhysicalPath{
     Param([string]$iisPhysicalPath, [string]$siteName)
       WriteDelimiter -m "IIS SETTINGS"
       if($iisPhysicalPath){
         #try{
             WriteMessage -t "IIS" -m "Changing physical path"
-            $iisSitePath = "IIS:\Sites\" + $siteName
-            WriteMessage -m $iisSitePath
-            $website = get-item $iisSitePath
+            $site = Get-IISsite $siteName
+
+            
             WriteMessage -m $website
             #$website.virtualDirectoryDefaults.userName = "domain\username"
             #$website.virtualDirectoryDefaults.password = "password"

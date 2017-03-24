@@ -71,7 +71,7 @@ catch{
 while($option -ne "q"){
     WriteMessage -t 0 -m "EVERYTHING!!!!!! :D"
     WriteMessage -t 1 -m "Start vpn"
-    #WriteMessage -t 2 -m "Change iis settings"
+    WriteMessage -t 2 -m "Change iis settings"
     WriteMessage -t 3 -m "Start applications"
     WriteMessage -t 4 -m "Open web pages"
     WriteMessage -t 5 -m "Change project"
@@ -104,7 +104,18 @@ while($option -ne "q"){
             }
         }
         if ($option -eq "2"){
-        #ChangeIISsitePhysicalPath -iisPhysicalPath $activeProject._settings._iisPhysicalPath -siteName $activeProject._settings._iisSiteName
+                WriteMessage -t 0 -m "Perform IIS-reset"
+                WriteMessage -t 1 -m "Change Physical path"
+
+                $suboption = Read-Host -Prompt 'What do you want to do with the IIS?'
+
+                if($subOption -eq 0){
+                    PerformIISReset
+                } 
+                if($subOption -eq 1){
+                    ChangeIISsitePhysicalPath -iisPhysicalPath $activeProject._settings._iisPhysicalPath -siteName $activeProject._settings._iisSiteName
+
+                }             
         }
         if($option -eq "4"){
             #Open web pages in chrome
