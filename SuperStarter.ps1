@@ -9,9 +9,8 @@ if(!(Get-Module -Name WebAdministration)){
     WriteErrorMessage -m "Could not find Module WebAdministration"
     WriteMessage -t "INSTALL" -m "Trying to install WebAdministration"
     WriteSkippingMessage -t "INSTALL" -m "If it fails. install manually" 
-    Enable-WindowsOptionalFeature -online -FeatureName IIS-WebServerManagementTools
-    Enable-WindowsOptionalFeature -online -FeatureName IIS-ManagementScriptingTools
     Enable-WindowsOptionalFeature -online -FeatureName IIS-ManagementService
+    Enable-WindowsOptionalFeature -online -FeatureName IIS-ManagementConsole
     Import-Module WebAdministration;    
 }else{
     Import-Module WebAdministration;
