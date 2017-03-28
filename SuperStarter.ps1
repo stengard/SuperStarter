@@ -4,20 +4,16 @@ Remove-Module *
 # Import stuff
 Import-Module ./Modules/Tools
 Import-Module ./Modules/CreateVirtualDesktopInWin10
-
-$iisVersion = Get-ItemProperty "HKLM:\software\microsoft\InetStp";
-if ($iisVersion.MajorVersion -eq 7)
-{
-    if ($iisVersion.MinorVersion -ge 5)
-    {
-        Import-Module WebAdministration;
-    }           
-    else
-    {
-        if (-not (Get-PSSnapIn | Where {$_.Name -eq "WebAdministration";})) {
-            Add-PSSnapIn WebAdministration;
-        }
-    }
+  
+if(!(Get-Module -Name WebAdministration)){
+    WriteErrorMessage -m "Could not find Module WebAdministration"
+    WriteMessage -t "INSTALL" -m "Trying to install WebAdministration"
+    WriteSkippingMessage -t "INSTALL" -m "If it fails. install manually" 
+    Enable-WindowsOptionalFeature -online -FeatureName IIS-WebServerManagementTools
+    Enable-WindowsOptionalFeature -online -FeatureName IIS-ManagementScriptingTools
+    Import-Module WebAdministration;    
+}else{
+    Import-Module WebAdministration;
 }
 
 if($selectedIndex){
@@ -31,6 +27,13 @@ if($openNewWindow){
 }
 
 WriteHeader
+
+$isAdmin = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")              
+if($isAdmin -eq "True"){
+    WriteMessage -t "ADMIN" -m  $isAdmin
+}else{
+    WriteErrorMessage -m "You will need to run powershell as admin for some features"
+}
 
 $global:BaseConfig = "./configs/config.json"
 $activeProject = "";
@@ -130,7 +133,6 @@ while($option -ne "q"){
                 if($subOption -eq 1){
                     $isAdmin = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")              
                     if($isAdmin -eq "True"){
-                        WriteMessage -t "ADMIN" -m  $isAdmin
                         for($i=0; $i -lt $activeProject._settings._iisPhysicalPath.length; $i++){
                             WriteMessage -t $i -m $activeProject._settings._iisPhysicalPath[$i]
                         }
@@ -143,12 +145,10 @@ while($option -ne "q"){
                         clear
                         .\SuperStarter.ps1
                     }else{        
-                        if($isAdmin){
-                            WriteErrorMessage -t "ADMIN" -m  "You need to start powershell as administrator to use this feature"
-                            $continue = Read-Host -Prompt 'Press any key to continue'
-                            clear
-                            .\SuperStarter.ps1
-                        }
+                        WriteErrorMessage -t "ADMIN" -m  "You need to start powershell as administrator to use this feature"
+                        $continue = Read-Host -Prompt 'Press any key to continue'
+                        clear
+                        .\SuperStarter.ps1      
                     }
 
                 }             

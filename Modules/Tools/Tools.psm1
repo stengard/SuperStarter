@@ -119,8 +119,8 @@ function StartApplicationsAsAdministrator{
 
 function CreateVirtualDesktop
 {
-     WriteDelimiter -m "AUTO APP STARTER ADMIN"
-	   WriteMessage -t "DESKTOP" -m "OPENING New virtual window"
+    WriteDelimiter -m "AUTO APP STARTER ADMIN"
+    WriteMessage -t "DESKTOP" -m "OPENING New virtual window"
     try{
         CreateVirtualDesktopInWin10
         sleep 1.5
