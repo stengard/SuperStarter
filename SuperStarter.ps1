@@ -11,6 +11,7 @@ if(!(Get-Module -Name WebAdministration)){
     WriteSkippingMessage -t "INSTALL" -m "If it fails. install manually" 
     Enable-WindowsOptionalFeature -online -FeatureName IIS-WebServerManagementTools
     Enable-WindowsOptionalFeature -online -FeatureName IIS-ManagementScriptingTools
+    Enable-WindowsOptionalFeature -online -FeatureName IIS-ManagementService
     Import-Module WebAdministration;    
 }else{
     Import-Module WebAdministration;
