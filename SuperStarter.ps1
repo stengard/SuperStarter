@@ -4,6 +4,7 @@ Remove-Module *
 # Import stuff
 Import-Module ./Modules/Tools
 Import-Module ./Modules/CreateVirtualDesktopInWin10
+Import-Module WebAdministration
 
 if($selectedIndex){
     Clear-Variable -name selectedIndex
@@ -107,13 +108,34 @@ while($option -ne "q"){
                 WriteMessage -t 0 -m "Perform IIS-reset"
                 WriteMessage -t 1 -m "Change Physical path"
 
-                $suboption = Read-Host -Prompt 'What do you want to do with the IIS?'
-
+                $subOption = Read-Host -Prompt 'Select option'
+                
                 if($subOption -eq 0){
                     PerformIISReset
                 } 
                 if($subOption -eq 1){
-                    ChangeIISsitePhysicalPath -iisPhysicalPath $activeProject._settings._iisPhysicalPath -siteName $activeProject._settings._iisSiteName
+                    $isAdmin = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")              
+                    if($isAdmin -eq "True"){
+                        WriteMessage -t "ADMIN" -m  $isAdmin
+                        for($i=0; $i -lt $activeProject._settings._iisPhysicalPath.length; $i++){
+                            WriteMessage -t $i -m $activeProject._settings._iisPhysicalPath[$i]
+                        }
+
+                        $p = Read-Host -Prompt 'Select path'
+                        
+                        ChangeIISsitePhysicalPath -iisPhysicalPath $activeProject._settings._iisPhysicalPath[$p] -siteName $activeProject._settings._iisSiteName
+                    
+                        $continue = Read-Host -Prompt 'Press any key to continue'
+                        clear
+                        .\SuperStarter.ps1
+                    }else{        
+                        if($isAdmin){
+                            WriteErrorMessage -t "ADMIN" -m  "You need to start powershell as administrator to use this feature"
+                            $continue = Read-Host -Prompt 'Press any key to continue'
+                            clear
+                            .\SuperStarter.ps1
+                        }
+                    }
 
                 }             
         }
@@ -128,7 +150,7 @@ while($option -ne "q"){
 
         while($openNewWindow -ne "y" -And $openNewWindow -ne "n"){
             $openNewWindow = Read-Host -Prompt 'Open in virtual window?'
-
+            
         	if($openNewWindow -ne "y" -And $openNewWindow -ne "n"){
         		WriteErrorMessage "Please select Y for Yes and N for No"
         	}else{

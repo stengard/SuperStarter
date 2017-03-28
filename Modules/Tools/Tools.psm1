@@ -12,8 +12,8 @@ function WriteMessage {
 }
 
 function WriteSkippingMessage {
-    Param ([string]$t, [string]$m)
-    Write-Host $t "     " -f yellow -nonewline; Write-Host $m "     " -f Cyan -nonewline; Write-Host "SKIPPING" -f Magenta
+    Param ([string]$t, [string]$m, [string]$i)
+    Write-Host $t "     " -f yellow -nonewline; Write-Host $m "     " -f Cyan -nonewline; Write-Host $i -f Magenta
     Write-Host ""
 }
 
@@ -42,7 +42,7 @@ function ConnectToVpn{
             WriteErrorMessage -m "Could not connect to. Please verify user credentials $vpnName"
         }
     }else{
-        WriteSkippingMessage -t "VPN" -m "No vpn name was specified in the config.js"
+        WriteSkippingMessage -t "VPN" -m "No vpn name was specified in the config.js" -i "SKIPPING"
     }
     WriteDelimiter
 }
@@ -65,7 +65,7 @@ function OpenChrome{
         }
         WriteMessage -t "CHROME" -m "Chrome has successfully started"
     }else{
-        WriteSkippingMessage -t "CHROME" -m "No webpages was specified in the config.js"
+        WriteSkippingMessage -t "CHROME" -m "No webpages was specified in the config.js" -i "SKIPPING"
     }
     WriteDelimiter
 
@@ -89,7 +89,7 @@ function StartApplications{
             WriteMessage -t "APP" "Sucessfully started $app"
         }
     }else{
-        WriteSkippingMessage -t "APP" -m "No applications has been provided in the config.js -b darkgreen"
+        WriteSkippingMessage -t "APP" -m "No applications has been provided in the config.js" -i "SKIPPING"
     }
     WriteDelimiter
 }
@@ -111,7 +111,7 @@ function StartApplicationsAsAdministrator{
 			}
 		}
 	}else{
-        WriteSkippingMessage -t "AUTOSTART" -m "No applications has been provided in the config.js -b darkgreen"
+        WriteSkippingMessage -t "AUTOSTART" -m "No applications has been provided in the config.js" -i "SKIPPING"
 
     }
     WriteDelimiter
@@ -126,7 +126,7 @@ function CreateVirtualDesktop
         sleep 1.5
 
     }catch{
-        WriteErrorMessage -m "Could open new virtual window start"
+        WriteErrorMessage -m "Could not open new virtual window start"
         WriteErrorMessage $_.Exception.Message
         exit
     }
@@ -136,13 +136,19 @@ function CreateVirtualDesktop
 
 function PerformIISReset{
       WriteDelimiter -m "IIS SETTINGS"    
-      WriteMessage -t "IIS" -m "Changing physical path"
+      WriteMessage -t "IIS" -m "Performing IISReset"
       WriteDelimiter
     try{
-        iisreset
+        iisreset 
+        WriteDelimiter           
+        WriteMessage -t "IIS Reset" -m "Done"
+        $d = Read-Host -Prompt 'Press any key to continue'
+        clear
+        .\SuperStarter.ps1
+
     }
     catch{
-        WriteErrorMessage -m "Could open new virtual window start"
+        WriteErrorMessage -m "Could not perform IISReset"
         WriteErrorMessage $_.Exception.Message
     }
 }
@@ -151,24 +157,29 @@ function ChangeIISsitePhysicalPath{
     Param([string]$iisPhysicalPath, [string]$siteName)
       WriteDelimiter -m "IIS SETTINGS"
       if($iisPhysicalPath){
-        #try{
-            WriteMessage -t "IIS" -m "Changing physical path"
-            $site = Get-IISsite $siteName
-
+        try{
+            WriteMessage -t "IIS" -m "Changing physical path for $siteName" 
+            $site = Get-Item "IIS:\sites\$siteName"
+            if(!$site){
+                WriteErrorMessage -m "Could not get site $siteName"
+                $continue = Read-Host -Prompt 'Press any key to start over'
+                clear
+                .\SuperStarter.ps1    
+            }
             
-            WriteMessage -m $website
-            #$website.virtualDirectoryDefaults.userName = "domain\username"
-            #$website.virtualDirectoryDefaults.password = "password"
-            $website | set-item
+            Set-ItemProperty "IIS:\sites\$siteName" -Name physicalPath -Value $iisPhysicalPath
+
             sleep 0.3
-            #iisreset?
-            #WriteMessage -t "IIS" -m "The physical path to project $siteName is now changed to $iisPhysicalPath"
-        #}catch{
-            #WriteErrorMessage -m "Could open change the physical address for site $siteName"
-            #WriteErrorMessage $_.Exception.Message
-        #}
+            WriteSkippingMessage -t "IIS" -m "The physical path to project $siteName is now changed to" -i $iisPhysicalPath
+            WriteMessage -t "IIS" -m "Performing IISReset..."  
+            iisreset
+            WriteDelimiter                
+        }catch{
+            WriteErrorMessage -m "Could change the physical address for site $siteName"
+            WriteErrorMessage $_.Exception.Message
+        }
       }else{
-        WriteSkippingMessage -t "IIS" -m "No iis settings has been provided in the config.js -b darkgreen"
+        WriteSkippingMessage -t "IIS" -m "No iis settings has been provided in the config.js" -i "SKIPPING"
       }
 }
 

@@ -1,21 +1,16 @@
 {
     "projects": [{
-            "project": {
-                "_useVpn": false,
-                "_name": "Project name. Can be anything.",
-                "_settings": {
-                    "_path": "Path to project to open. Could really be in _autoStartPrograms instead",
-                    "_iisSiteName": "Name of the site to start in iis",
-                    "_iisPhysicalPath": "C:/project root",
-                    "_vpnName": "VPN name",
-                    "_webPages": [
-                        "Opens webpages in this array in a new window in chrome"
-                    ],
-                    "_autoStartPrograms": [
-                        "Path to an app that should be started"
-                    ]
-                }
+        "project": {
+            "_startAsAdmin": false,
+            "_name": "Test",
+            "_useNewChromeWindow": false,
+            "_settings": {
+                "_iisPhysicalPath": ["sökväg till dev till exempel", "eller till main"],
+                "_iisSiteName": "formas.knowit.se",
+                "_vpnName": "",
+                "_webPages": [],
+                "_autoStartPrograms": []
             }
         }
-    ]
+    }]
 }
