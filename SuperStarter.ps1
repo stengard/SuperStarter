@@ -4,7 +4,21 @@ Remove-Module *
 # Import stuff
 Import-Module ./Modules/Tools
 Import-Module ./Modules/CreateVirtualDesktopInWin10
-Import-Module WebAdministration
+
+$iisVersion = Get-ItemProperty "HKLM:\software\microsoft\InetStp";
+if ($iisVersion.MajorVersion -eq 7)
+{
+    if ($iisVersion.MinorVersion -ge 5)
+    {
+        Import-Module WebAdministration;
+    }           
+    else
+    {
+        if (-not (Get-PSSnapIn | Where {$_.Name -eq "WebAdministration";})) {
+            Add-PSSnapIn WebAdministration;
+        }
+    }
+}
 
 if($selectedIndex){
     Clear-Variable -name selectedIndex
